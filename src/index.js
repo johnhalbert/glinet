@@ -9,16 +9,12 @@ import { getConfigValue, setConfigValue } from './config.js';
 
 yargs(hideBin(process.argv))
   .command(
-    'login <password> [ip]',
+    'login <password>',
     'login to the router',
     (yargs) => {
       return yargs
         .positional('password', {
           describe: 'admin password for router',
-        })
-        .positional('ip', {
-          describe: 'ip of the router',
-          default: '192.168.8.1',
         });
     },
     async ({ password, ip }) => {
@@ -28,20 +24,18 @@ yargs(hideBin(process.argv))
     }
   )
   .command(
-    'reboot [ip]',
+    'reboot',
     'reboot the router',
-    (yargs) => {
-      return yargs
-        .positional('ip', {
-          describe: 'ip of the router',
-          default: '192.168.8.1',
-        });
-    },
+    () => {},
     async ({ ip }) => {
       const token = getConfigValue('token');
       const [rebootErr] = await p(reboot(token, ip));
       if (rebootErr) console.error(rebootErr.message);
     }
   )
+  .option('ip', {
+    type: 'string',
+    description: 'IP address of the router',
+  })
   .demandCommand(1)
   .parse();
