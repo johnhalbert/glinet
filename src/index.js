@@ -15,12 +15,15 @@ yargs(hideBin(process.argv))
       return yargs
         .positional('password', {
           describe: 'admin password for router',
+        })
+        .option('save-password', {
+          type: 'boolean',
+          description: 'Save password to enable auto-login',
         });
     },
-    async ({ password, ip }) => {
-      const [tokenErr, token] = await p(login(password, ip));
-      if (tokenErr) return console.error(tokenErr.message);
-      setConfigValue('token', token);
+    async ({ password, ip, savePassword }) => {
+      const [loginErr] = await p(login(password, ip, savePassword));
+      if (loginErr) return console.error(loginErr.message);
     }
   )
   .command(
