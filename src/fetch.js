@@ -16,7 +16,7 @@ export default async function fetch(url, options) {
         const password = getConfigValue('password');
         if (password) {
           const { host: ip } = new URL(url);
-          const [loginErr] = login(password, ip);
+          const [loginErr] = await p(login(password, ip));
           if (loginErr)
             return [new Error('Unable to login'), null];
           return fetch(url, options);
